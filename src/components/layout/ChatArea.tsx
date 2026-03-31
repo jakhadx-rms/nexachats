@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Send, Smile, Paperclip, Mic } from "lucide-react";
-import { messages as sampleMessages } from "@/data/sampleData";
+import { messages as sampleMessages, Message } from "@/data/sampleData";
 import MessageBubble from "@/components/chat/MessageBubble";
 import TypingIndicator from "@/components/chat/TypingIndicator";
 import EmptyState from "@/components/chat/EmptyState";
@@ -12,17 +12,44 @@ interface ChatAreaProps {
 
 const ChatArea = ({ chatId }: ChatAreaProps) => {
   const [input, setInput] = useState("");
+  const [messages, setMessages] = useState<Message[]>(sampleMessages);
   const [showTyping, setShowTyping] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chatId]);
+  }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatId, messages, scrollToBottom]);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowTyping(false), 3000);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleSend = () => {
+    const text = input.trim();
+    if (!text) return;
+
+    const newMessage: Message = {
+      id: Date.now().toString(),
+      text,
+      sender: "me",
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+
+    setMessages((prev) => [...prev, newMessage]);
+    setInput("");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
 
   if (!chatId) {
     return <EmptyState type="no-chat" />;
@@ -37,7 +64,7 @@ const ChatArea = ({ chatId }: ChatAreaProps) => {
             Today
           </span>
         </div>
-        {sampleMessages.map((msg) => (
+        {messages.map((msg) => (
           <MessageBubble key={msg.id} message={msg} />
         ))}
         {showTyping && <TypingIndicator />}
@@ -56,11 +83,12 @@ const ChatArea = ({ chatId }: ChatAreaProps) => {
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="Type a message..."
             className="flex-1 bg-transparent border-0 text-sm py-2 focus:outline-none placeholder:text-muted-foreground/50"
           />
           {input.trim() ? (
-            <button className="p-2 bg-primary rounded-lg hover:bg-primary/90 transition-colors">
+            <button onClick={handleSend} className="p-2 bg-primary rounded-lg hover:bg-primary/90 transition-colors">
               <Send className="h-4 w-4 text-primary-foreground" />
             </button>
           ) : (
