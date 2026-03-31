@@ -38,7 +38,13 @@ const TopBar = ({ chat, onToggleSidebar, onToggleAI, showBackButton }: TopBarPro
             <div>
               <h2 className="text-sm font-semibold leading-tight">{chat.name}</h2>
               <span className="text-xs text-muted-foreground">
-                {chat.online ? "Online" : chat.isGroup ? `${Math.floor(Math.random() * 10 + 3)} members` : "Last seen recently"}
+                {chat.online ? (
+                  <span className="text-emerald-500">● Online</span>
+                ) : chat.isGroup ? (
+                  `${Math.floor(Math.random() * 10 + 3)} members`
+                ) : (
+                  chat.lastSeen || "Last seen recently"
+                )}
               </span>
             </div>
           </div>

@@ -1,16 +1,19 @@
 import { useState } from "react";
-import { Search, Plus, MessageSquare } from "lucide-react";
-import { chats } from "@/data/sampleData";
+import { Search, Plus, MessageSquare, RotateCcw } from "lucide-react";
+import { Chat } from "@/data/sampleData";
 import ChatCard from "@/components/chat/ChatCard";
 import { cn } from "@/lib/utils";
 
 interface ChatSidebarProps {
+  chats: Chat[];
   activeChatId: string | null;
   onSelectChat: (id: string) => void;
+  onClearStorage?: () => void;
+  typingChatId?: string | null;
   className?: string;
 }
 
-const ChatSidebar = ({ activeChatId, onSelectChat, className }: ChatSidebarProps) => {
+const ChatSidebar = ({ chats, activeChatId, onSelectChat, onClearStorage, typingChatId, className }: ChatSidebarProps) => {
   const [search, setSearch] = useState("");
 
   const filtered = chats.filter(
@@ -18,6 +21,8 @@ const ChatSidebar = ({ activeChatId, onSelectChat, className }: ChatSidebarProps
       c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.lastMessage.toLowerCase().includes(search.toLowerCase())
   );
+
+  const totalUnread = chats.reduce((sum, c) => sum + c.unread, 0);
 
   return (
     <aside className={cn("flex flex-col h-full bg-card border-r", className)}>
@@ -29,10 +34,26 @@ const ChatSidebar = ({ activeChatId, onSelectChat, className }: ChatSidebarProps
               <MessageSquare className="h-4 w-4 text-primary-foreground" />
             </div>
             <h1 className="text-lg font-bold tracking-tight">NexaChat</h1>
+            {totalUnread > 0 && (
+              <span className="ml-1 px-1.5 py-0.5 text-[10px] font-bold bg-primary text-primary-foreground rounded-full">
+                {totalUnread}
+              </span>
+            )}
           </div>
-          <button className="p-2 rounded-lg hover:bg-muted transition-colors">
-            <Plus className="h-5 w-5 text-muted-foreground" />
-          </button>
+          <div className="flex items-center gap-1">
+            {onClearStorage && (
+              <button
+                onClick={onClearStorage}
+                title="Reset chats"
+                className="p-2 rounded-lg hover:bg-muted transition-colors"
+              >
+                <RotateCcw className="h-4 w-4 text-muted-foreground" />
+              </button>
+            )}
+            <button className="p-2 rounded-lg hover:bg-muted transition-colors">
+              <Plus className="h-5 w-5 text-muted-foreground" />
+            </button>
+          </div>
         </div>
 
         <div className="relative">
@@ -54,6 +75,7 @@ const ChatSidebar = ({ activeChatId, onSelectChat, className }: ChatSidebarProps
               key={chat.id}
               chat={chat}
               isActive={activeChatId === chat.id}
+              isTyping={typingChatId === chat.id}
               onClick={() => onSelectChat(chat.id)}
             />
           ))

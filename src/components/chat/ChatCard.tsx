@@ -5,10 +5,11 @@ import { cn } from "@/lib/utils";
 interface ChatCardProps {
   chat: Chat;
   isActive: boolean;
+  isTyping?: boolean;
   onClick: () => void;
 }
 
-const ChatCard = ({ chat, isActive, onClick }: ChatCardProps) => {
+const ChatCard = ({ chat, isActive, isTyping, onClick }: ChatCardProps) => {
   return (
     <button
       onClick={onClick}
@@ -43,7 +44,11 @@ const ChatCard = ({ chat, isActive, onClick }: ChatCardProps) => {
           </span>
         </div>
         <p className="text-xs text-muted-foreground truncate mt-0.5">
-          {chat.lastMessage}
+          {isTyping ? (
+            <span className="text-primary italic">typing...</span>
+          ) : (
+            chat.lastMessage
+          )}
         </p>
       </div>
 

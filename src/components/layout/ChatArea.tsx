@@ -1,19 +1,23 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Send, Smile, Paperclip, Mic } from "lucide-react";
-import { messages as sampleMessages, Message } from "@/data/sampleData";
+import { Message } from "@/data/sampleData";
 import MessageBubble from "@/components/chat/MessageBubble";
 import TypingIndicator from "@/components/chat/TypingIndicator";
 import EmptyState from "@/components/chat/EmptyState";
+import EmojiPicker from "@/components/chat/EmojiPicker";
 import { cn } from "@/lib/utils";
 
 interface ChatAreaProps {
   chatId: string | null;
+  messages: Message[];
+  isTyping: boolean;
+  onSendMessage: (text: string) => void;
+  chatName?: string;
 }
 
-const ChatArea = ({ chatId }: ChatAreaProps) => {
+const ChatArea = ({ chatId, messages, isTyping, onSendMessage, chatName }: ChatAreaProps) => {
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<Message[]>(sampleMessages);
-  const [showTyping, setShowTyping] = useState(true);
+  const [showEmoji, setShowEmoji] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -22,26 +26,14 @@ const ChatArea = ({ chatId }: ChatAreaProps) => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [chatId, messages, scrollToBottom]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setShowTyping(false), 3000);
-    return () => clearTimeout(timer);
-  }, []);
+  }, [chatId, messages, isTyping, scrollToBottom]);
 
   const handleSend = () => {
     const text = input.trim();
     if (!text) return;
-
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      text,
-      sender: "me",
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    };
-
-    setMessages((prev) => [...prev, newMessage]);
+    onSendMessage(text);
     setInput("");
+    setShowEmoji(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -49,6 +41,10 @@ const ChatArea = ({ chatId }: ChatAreaProps) => {
       e.preventDefault();
       handleSend();
     }
+  };
+
+  const handleEmojiSelect = (emoji: string) => {
+    setInput(prev => prev + emoji);
   };
 
   if (!chatId) {
@@ -64,18 +60,36 @@ const ChatArea = ({ chatId }: ChatAreaProps) => {
             Today
           </span>
         </div>
-        {messages.map((msg) => (
-          <MessageBubble key={msg.id} message={msg} />
-        ))}
-        {showTyping && <TypingIndicator />}
+        {messages.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-sm text-muted-foreground">No messages yet. Say hi! 👋</p>
+          </div>
+        ) : (
+          messages.map((msg) => (
+            <MessageBubble key={msg.id} message={msg} />
+          ))
+        )}
+        {isTyping && <TypingIndicator name={chatName} />}
         <div ref={messagesEndRef} />
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t bg-card/50">
+      <div className="p-4 border-t bg-card/50 relative">
+        {showEmoji && (
+          <EmojiPicker
+            onSelect={handleEmojiSelect}
+            onClose={() => setShowEmoji(false)}
+          />
+        )}
         <div className="flex items-center gap-2 bg-muted/60 rounded-xl px-3 py-1.5">
-          <button className="p-1.5 hover:bg-background rounded-lg transition-colors">
-            <Smile className="h-5 w-5 text-muted-foreground" />
+          <button
+            onClick={() => setShowEmoji(!showEmoji)}
+            className={cn(
+              "p-1.5 rounded-lg transition-colors",
+              showEmoji ? "bg-primary/10 text-primary" : "hover:bg-background text-muted-foreground"
+            )}
+          >
+            <Smile className="h-5 w-5" />
           </button>
           <button className="p-1.5 hover:bg-background rounded-lg transition-colors">
             <Paperclip className="h-5 w-5 text-muted-foreground" />
