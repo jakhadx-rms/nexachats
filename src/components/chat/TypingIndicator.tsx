@@ -1,4 +1,8 @@
-const TypingIndicator = () => {
+interface TypingIndicatorProps {
+  name?: string;
+}
+
+const TypingIndicator = ({ name }: TypingIndicatorProps) => {
   return (
     <div className="flex items-center gap-2 px-4 py-2">
       <div className="bg-received rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-1.5">
@@ -10,7 +14,7 @@ const TypingIndicator = () => {
           />
         ))}
       </div>
-      <span className="text-xs text-muted-foreground">Sarah is typing...</span>
+      <span className="text-xs text-muted-foreground">{name || "Someone"} is typing...</span>
     </div>
   );
 };
