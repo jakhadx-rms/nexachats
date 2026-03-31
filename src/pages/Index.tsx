@@ -10,60 +10,90 @@ import { cn } from "@/lib/utils";
 const Index = () => {
   const [activeChatId, setActiveChatId] = useState<string | null>("1");
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [aiPanelOpen, setAiPanelOpen] = useState(true);
+  const [aiPanelOpen, setAiPanelOpen] = useState(false);
+  // On mobile, show chat list by default; selecting a chat hides the list
+  const [mobileShowChat, setMobileShowChat] = useState(false);
 
   const activeChat = chats.find((c) => c.id === activeChatId) || null;
 
+  const handleSelectChat = (id: string) => {
+    setActiveChatId(id);
+    setMobileShowChat(true);
+    if (window.innerWidth < 1024) setSidebarOpen(false);
+  };
+
+  const handleBackToList = () => {
+    setMobileShowChat(false);
+    setSidebarOpen(true);
+  };
+
   return (
-    <div className="h-screen flex flex-col bg-background overflow-hidden">
+    <div className="h-dvh flex flex-col bg-background overflow-hidden">
       <GuestBanner />
       <div className="flex-1 flex min-h-0">
-        {/* Sidebar */}
+        {/* Sidebar - full screen on mobile, fixed width on desktop */}
         <div
           className={cn(
-            "transition-all duration-300 shrink-0",
-            sidebarOpen ? "w-80" : "w-0",
-            "max-lg:absolute max-lg:z-30 max-lg:h-full max-lg:shadow-xl",
-            !sidebarOpen && "max-lg:pointer-events-none"
+            "shrink-0 transition-all duration-300",
+            // Desktop
+            "lg:w-80 lg:block",
+            // Mobile: full width when visible, hidden when viewing a chat
+            "max-lg:absolute max-lg:inset-0 max-lg:z-30",
+            mobileShowChat ? "max-lg:hidden" : "max-lg:block max-lg:w-full",
+            // Desktop sidebar toggle
+            !sidebarOpen && "lg:w-0 lg:overflow-hidden"
           )}
         >
           <ChatSidebar
             activeChatId={activeChatId}
-            onSelectChat={(id) => {
-              setActiveChatId(id);
-              if (window.innerWidth < 1024) setSidebarOpen(false);
-            }}
-            className={cn(!sidebarOpen && "opacity-0")}
+            onSelectChat={handleSelectChat}
+            className={cn(!sidebarOpen && "lg:opacity-0")}
           />
         </div>
 
-        {/* Main area */}
-        <div className="flex-1 flex flex-col min-w-0">
+        {/* Main chat area - hidden on mobile when no chat selected */}
+        <div
+          className={cn(
+            "flex-1 flex flex-col min-w-0",
+            !mobileShowChat && "max-lg:hidden"
+          )}
+        >
           <TopBar
             chat={activeChat}
-            onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+            onToggleSidebar={() => {
+              if (window.innerWidth < 1024) {
+                handleBackToList();
+              } else {
+                setSidebarOpen(!sidebarOpen);
+              }
+            }}
             onToggleAI={() => setAiPanelOpen(!aiPanelOpen)}
-            showBackButton={!sidebarOpen}
+            showBackButton={mobileShowChat}
           />
           <div className="flex-1 min-h-0">
             <ChatArea chatId={activeChatId} />
           </div>
         </div>
 
-        {/* AI Panel */}
-        <div
-          className={cn(
-            "transition-all duration-300 shrink-0",
-            aiPanelOpen ? "w-80" : "w-0",
-            "max-xl:absolute max-xl:right-0 max-xl:z-30 max-xl:h-full max-xl:shadow-xl",
-            !aiPanelOpen && "max-xl:pointer-events-none"
-          )}
-        >
-          <AIPanel
-            className={cn(!aiPanelOpen && "opacity-0")}
-            onClose={() => setAiPanelOpen(false)}
-          />
-        </div>
+        {/* AI Panel - overlay on mobile/tablet, side panel on xl+ */}
+        {aiPanelOpen && (
+          <>
+            {/* Backdrop on mobile */}
+            <div
+              className="fixed inset-0 bg-black/40 z-30 xl:hidden"
+              onClick={() => setAiPanelOpen(false)}
+            />
+            <div
+              className={cn(
+                "shrink-0 z-40",
+                "xl:w-80 xl:relative",
+                "max-xl:fixed max-xl:right-0 max-xl:top-0 max-xl:bottom-0 max-xl:w-[85vw] max-xl:max-w-80 max-xl:shadow-xl"
+              )}
+            >
+              <AIPanel onClose={() => setAiPanelOpen(false)} />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

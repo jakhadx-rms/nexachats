@@ -22,7 +22,7 @@ const TopBar = ({ chat, onToggleSidebar, onToggleAI, showBackButton }: TopBarPro
     <header className="h-16 border-b bg-card/80 backdrop-blur-sm flex items-center justify-between px-4 shrink-0">
       <div className="flex items-center gap-3">
         {showBackButton && (
-          <button onClick={onToggleSidebar} className="p-2 rounded-lg hover:bg-muted transition-colors lg:hidden">
+          <button onClick={onToggleSidebar} className="p-2 rounded-lg hover:bg-muted transition-colors">
             <ChevronLeft className="h-5 w-5" />
           </button>
         )}
