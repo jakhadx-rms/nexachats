@@ -172,3 +172,110 @@ export const smartReplies = [
 ];
 
 export const chatSummary = "This conversation covered the CS401 frontend project progress, which is nearly complete. Key items: project deadline is March 21st, Sarah's birthday is March 15th (team celebration planned), and a report needs to be submitted by Wednesday.";
+
+// ===== Second Brain AI =====
+export interface KnowledgeNode {
+  id: string;
+  label: string;
+  type: "topic" | "person" | "project" | "concept";
+  connections: string[];
+  strength: number; // 0-100
+}
+
+export interface InsightCard {
+  id: string;
+  title: string;
+  description: string;
+  source: string;
+  confidence: number;
+  tags: string[];
+  createdAt: string;
+}
+
+export const knowledgeNodes: KnowledgeNode[] = [
+  { id: "k1", label: "CS401 Project", type: "project", connections: ["k2", "k3", "k5"], strength: 95 },
+  { id: "k2", label: "Sarah Chen", type: "person", connections: ["k1", "k4", "k6"], strength: 88 },
+  { id: "k3", label: "Frontend Dev", type: "topic", connections: ["k1", "k7"], strength: 75 },
+  { id: "k4", label: "Birthday Planning", type: "concept", connections: ["k2", "k8"], strength: 60 },
+  { id: "k5", label: "Deadlines", type: "concept", connections: ["k1", "k6"], strength: 82 },
+  { id: "k6", label: "Study Group", type: "project", connections: ["k2", "k5", "k7"], strength: 70 },
+  { id: "k7", label: "Hackathon 2025", type: "project", connections: ["k3", "k6"], strength: 55 },
+  { id: "k8", label: "Team Events", type: "topic", connections: ["k4", "k6"], strength: 45 },
+];
+
+export const insights: InsightCard[] = [
+  { id: "i1", title: "Sarah is central to your network", description: "Connected to 4 major topics. Consider her your key collaborator for CS401.", source: "Conversation analysis", confidence: 92, tags: ["people", "collaboration"], createdAt: "2 hours ago" },
+  { id: "i2", title: "Deadline cluster detected", description: "3 deadlines within the next 7 days. Prioritize CS401 report first.", source: "Memory engine", confidence: 87, tags: ["urgency", "planning"], createdAt: "30 min ago" },
+  { id: "i3", title: "Recurring topic: Frontend Dev", description: "Mentioned across 4 conversations. You're building expertise in this area.", source: "Pattern analysis", confidence: 78, tags: ["learning", "skills"], createdAt: "1 day ago" },
+];
+
+// ===== AI Memory Engine =====
+export interface MemoryTimeline {
+  id: string;
+  type: "auto-capture" | "reminder" | "pattern";
+  title: string;
+  description: string;
+  timestamp: string;
+  sourceChat: string;
+  importance: "high" | "medium" | "low";
+  acknowledged: boolean;
+}
+
+export interface SmartReminder {
+  id: string;
+  title: string;
+  dueDate: string;
+  relatedPerson: string;
+  status: "upcoming" | "overdue" | "completed";
+  autoDetected: boolean;
+}
+
+export const memoryTimeline: MemoryTimeline[] = [
+  { id: "mt1", type: "auto-capture", title: "Birthday detected", description: "Sarah Chen's birthday is March 15th", timestamp: "Today, 10:36 AM", sourceChat: "Sarah Chen", importance: "high", acknowledged: false },
+  { id: "mt2", type: "auto-capture", title: "Deadline captured", description: "CS401 project due March 21st", timestamp: "Today, 10:33 AM", sourceChat: "Sarah Chen", importance: "high", acknowledged: true },
+  { id: "mt3", type: "pattern", title: "Study pattern detected", description: "You study most at the library between 3-6 PM", timestamp: "Yesterday", sourceChat: "Multiple", importance: "low", acknowledged: false },
+  { id: "mt4", type: "reminder", title: "Report submission", description: "Submit report by Wednesday (requested by Sarah)", timestamp: "Today, 10:38 AM", sourceChat: "Sarah Chen", importance: "high", acknowledged: false },
+  { id: "mt5", type: "auto-capture", title: "Meeting reschedule", description: "Design review moved to 3pm tomorrow", timestamp: "Today, 11:00 AM", sourceChat: "Design Team", importance: "medium", acknowledged: true },
+];
+
+export const smartReminders: SmartReminder[] = [
+  { id: "sr1", title: "Sarah's Birthday 🎂", dueDate: "March 15", relatedPerson: "Sarah Chen", status: "upcoming", autoDetected: true },
+  { id: "sr2", title: "Submit Report", dueDate: "Wednesday", relatedPerson: "Sarah Chen", status: "upcoming", autoDetected: true },
+  { id: "sr3", title: "CS401 Assignment", dueDate: "Friday", relatedPerson: "Study Group", status: "upcoming", autoDetected: true },
+  { id: "sr4", title: "Design Review", dueDate: "Tomorrow 3pm", relatedPerson: "Design Team", status: "upcoming", autoDetected: true },
+];
+
+// ===== Personal AI Context System =====
+export interface ContextProfile {
+  personId: string;
+  name: string;
+  avatar: string;
+  relationship: "close friend" | "classmate" | "professor" | "team member";
+  interactionFrequency: "daily" | "weekly" | "occasional";
+  topTopics: string[];
+  sentiment: "positive" | "neutral" | "mixed";
+  lastInteraction: string;
+  sharedMemories: number;
+}
+
+export interface ConversationPattern {
+  id: string;
+  pattern: string;
+  description: string;
+  frequency: number;
+  trend: "up" | "down" | "stable";
+}
+
+export const contextProfiles: ContextProfile[] = [
+  { personId: "1", name: "Sarah Chen", avatar: "SC", relationship: "close friend", interactionFrequency: "daily", topTopics: ["CS401", "Birthday", "Projects"], sentiment: "positive", lastInteraction: "10 min ago", sharedMemories: 8 },
+  { personId: "3", name: "Alex Rivera", avatar: "AR", relationship: "classmate", interactionFrequency: "weekly", topTopics: ["Code Review", "APIs", "Auth"], sentiment: "positive", lastInteraction: "1 day ago", sharedMemories: 3 },
+  { personId: "6", name: "Prof. Williams", avatar: "PW", relationship: "professor", interactionFrequency: "occasional", topTopics: ["Midterm", "Office Hours", "Syllabus"], sentiment: "neutral", lastInteraction: "2 days ago", sharedMemories: 2 },
+  { personId: "5", name: "Jamie Park", avatar: "JP", relationship: "classmate", interactionFrequency: "weekly", topTopics: ["Lecture Notes", "Study Group"], sentiment: "positive", lastInteraction: "1 day ago", sharedMemories: 2 },
+];
+
+export const conversationPatterns: ConversationPattern[] = [
+  { id: "cp1", pattern: "Peak chat hours", description: "Most active between 10 AM - 12 PM", frequency: 85, trend: "stable" },
+  { id: "cp2", pattern: "Task delegation", description: "You frequently assign & track tasks in chats", frequency: 72, trend: "up" },
+  { id: "cp3", pattern: "Emoji usage", description: "You use 2.3 emojis per conversation on average", frequency: 60, trend: "up" },
+  { id: "cp4", pattern: "Response time", description: "Average reply within 5 minutes", frequency: 90, trend: "stable" },
+];
