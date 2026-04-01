@@ -23,7 +23,7 @@ const tabs: { key: TabKey; label: string; icon: React.ElementType }[] = [
   { key: "actions", label: "Actions", icon: Zap },
 ];
 
-const AIPanel = ({ className, onClose }: AIPanelProps) => {
+const AIPanel = ({ className, onClose, onSmartReply }: AIPanelProps) => {
   const [activeTab, setActiveTab] = useState<TabKey>("brain");
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [summaryVisible, setSummaryVisible] = useState(false);
