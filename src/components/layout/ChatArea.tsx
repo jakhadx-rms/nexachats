@@ -126,6 +126,8 @@ const ChatArea = forwardRef<ChatAreaHandle, ChatAreaProps>(({ chatId, messages, 
       </div>
     </div>
   );
-};
+});
+
+ChatArea.displayName = "ChatArea";
 
 export default ChatArea;
