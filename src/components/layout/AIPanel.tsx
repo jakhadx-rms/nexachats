@@ -155,6 +155,7 @@ const AIPanel = ({ className, onClose, onSmartReply }: AIPanelProps) => {
                     {smartReplies.map((reply, i) => (
                       <button
                         key={i}
+                        onClick={() => onSmartReply?.(reply)}
                         className="w-full text-left text-xs px-3 py-2.5 rounded-lg border hover:border-primary/30 hover:bg-primary/5 transition-all"
                       >
                         {reply}
