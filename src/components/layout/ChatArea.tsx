@@ -23,6 +23,14 @@ const ChatArea = forwardRef<ChatAreaHandle, ChatAreaProps>(({ chatId, messages, 
   const [input, setInput] = useState("");
   const [showEmoji, setShowEmoji] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    setInputText: (text: string) => {
+      setInput(text);
+      setTimeout(() => inputRef.current?.focus(), 50);
+    },
+  }));
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
