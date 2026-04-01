@@ -1,4 +1,4 @@
-import { Bell, Menu, ChevronLeft, Phone, Video, MoreVertical, User, Settings, LogOut } from "lucide-react";
+import { Bell, Menu, ChevronLeft, Phone, Video, MoreVertical, User, Settings, LogOut, Sparkles } from "lucide-react";
 import { Chat } from "@/data/sampleData";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
