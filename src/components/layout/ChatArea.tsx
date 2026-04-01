@@ -107,6 +107,7 @@ const ChatArea = forwardRef<ChatAreaHandle, ChatAreaProps>(({ chatId, messages, 
             <Paperclip className="h-5 w-5 text-muted-foreground" />
           </button>
           <input
+            ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
