@@ -19,7 +19,7 @@ interface ChatAreaProps {
   chatName?: string;
 }
 
-const ChatArea = ({ chatId, messages, isTyping, onSendMessage, chatName }: ChatAreaProps) => {
+const ChatArea = forwardRef<ChatAreaHandle, ChatAreaProps>(({ chatId, messages, isTyping, onSendMessage, chatName }, ref) => {
   const [input, setInput] = useState("");
   const [showEmoji, setShowEmoji] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
