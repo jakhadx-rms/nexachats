@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useImperativeHandle, forwardRef } from "react";
 import { Send, Smile, Paperclip, Mic } from "lucide-react";
 import { Message } from "@/data/sampleData";
 import MessageBubble from "@/components/chat/MessageBubble";
@@ -6,6 +6,10 @@ import TypingIndicator from "@/components/chat/TypingIndicator";
 import EmptyState from "@/components/chat/EmptyState";
 import EmojiPicker from "@/components/chat/EmojiPicker";
 import { cn } from "@/lib/utils";
+
+export interface ChatAreaHandle {
+  setInputText: (text: string) => void;
+}
 
 interface ChatAreaProps {
   chatId: string | null;
