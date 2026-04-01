@@ -63,8 +63,13 @@ const TopBar = ({ chat, onToggleSidebar, onToggleAI, showBackButton, aiBadgeCoun
           <Bell className="h-4 w-4 text-muted-foreground" />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-accent rounded-full" />
         </button>
-        <button onClick={onToggleAI} className="p-2 rounded-lg hover:bg-muted transition-colors">
-          <MoreVertical className="h-4 w-4 text-muted-foreground" />
+        <button onClick={onToggleAI} className="relative p-2 rounded-lg hover:bg-muted transition-colors">
+          <Sparkles className="h-4 w-4 text-muted-foreground" />
+          {aiBadgeCount > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center px-1 text-[10px] font-bold bg-accent text-accent-foreground rounded-full animate-bounce">
+              {aiBadgeCount > 9 ? "9+" : aiBadgeCount}
+            </span>
+          )}
         </button>
 
         <DropdownMenu>
