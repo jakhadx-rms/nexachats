@@ -15,6 +15,7 @@ interface TopBarProps {
   onToggleSidebar?: () => void;
   onToggleAI?: () => void;
   showBackButton?: boolean;
+  aiBadgeCount?: number;
 }
 
 const TopBar = ({ chat, onToggleSidebar, onToggleAI, showBackButton }: TopBarProps) => {
