@@ -18,7 +18,7 @@ interface TopBarProps {
   aiBadgeCount?: number;
 }
 
-const TopBar = ({ chat, onToggleSidebar, onToggleAI, showBackButton }: TopBarProps) => {
+const TopBar = ({ chat, onToggleSidebar, onToggleAI, showBackButton, aiBadgeCount = 0 }: TopBarProps) => {
   return (
     <header className="h-16 border-b bg-card/80 backdrop-blur-sm flex items-center justify-between px-4 shrink-0">
       <div className="flex items-center gap-3">
