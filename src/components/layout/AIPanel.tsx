@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 interface AIPanelProps {
   className?: string;
   onClose?: () => void;
+  onSmartReply?: (text: string) => void;
 }
 
 type TabKey = "brain" | "memory" | "context" | "actions";
