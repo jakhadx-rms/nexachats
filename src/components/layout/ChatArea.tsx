@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useImperativeHandle, forwardRef } from "react";
 import { Send, Smile, Paperclip, Mic } from "lucide-react";
 import { Message } from "@/data/sampleData";
 import MessageBubble from "@/components/chat/MessageBubble";
@@ -6,6 +6,10 @@ import TypingIndicator from "@/components/chat/TypingIndicator";
 import EmptyState from "@/components/chat/EmptyState";
 import EmojiPicker from "@/components/chat/EmojiPicker";
 import { cn } from "@/lib/utils";
+
+export interface ChatAreaHandle {
+  setInputText: (text: string) => void;
+}
 
 interface ChatAreaProps {
   chatId: string | null;
@@ -15,10 +19,18 @@ interface ChatAreaProps {
   chatName?: string;
 }
 
-const ChatArea = ({ chatId, messages, isTyping, onSendMessage, chatName }: ChatAreaProps) => {
+const ChatArea = forwardRef<ChatAreaHandle, ChatAreaProps>(({ chatId, messages, isTyping, onSendMessage, chatName }, ref) => {
   const [input, setInput] = useState("");
   const [showEmoji, setShowEmoji] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    setInputText: (text: string) => {
+      setInput(text);
+      setTimeout(() => inputRef.current?.focus(), 50);
+    },
+  }));
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -95,6 +107,7 @@ const ChatArea = ({ chatId, messages, isTyping, onSendMessage, chatName }: ChatA
             <Paperclip className="h-5 w-5 text-muted-foreground" />
           </button>
           <input
+            ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -114,6 +127,8 @@ const ChatArea = ({ chatId, messages, isTyping, onSendMessage, chatName }: ChatA
       </div>
     </div>
   );
-};
+});
+
+ChatArea.displayName = "ChatArea";
 
 export default ChatArea;

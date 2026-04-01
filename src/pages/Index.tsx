@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import ChatSidebar from "@/components/layout/ChatSidebar";
 import TopBar from "@/components/layout/TopBar";
-import ChatArea from "@/components/layout/ChatArea";
+import ChatArea, { ChatAreaHandle } from "@/components/layout/ChatArea";
 import AIPanel from "@/components/layout/AIPanel";
 import GuestBanner from "@/components/layout/GuestBanner";
 import { useChatStore } from "@/hooks/useChatStore";
 import { cn } from "@/lib/utils";
+import { memoryTimeline } from "@/data/sampleData";
 
 const Index = () => {
   const {
@@ -23,6 +24,29 @@ const Index = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [aiPanelOpen, setAiPanelOpen] = useState(false);
   const [mobileShowChat, setMobileShowChat] = useState(false);
+  const [memoryBadge, setMemoryBadge] = useState(
+    () => memoryTimeline.filter((m) => !m.acknowledged).length
+  );
+  const chatAreaRef = useRef<ChatAreaHandle>(null);
+
+  // Simulate new memory captures periodically
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMemoryBadge((prev) => {
+        if (aiPanelOpen) return prev;
+        return prev + 1;
+      });
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [aiPanelOpen]);
+
+  // Clear badge when panel opens
+  useEffect(() => {
+    if (aiPanelOpen) {
+      const timer = setTimeout(() => setMemoryBadge(0), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [aiPanelOpen]);
 
   const handleSelectChat = (id: string) => {
     selectChat(id);
@@ -39,6 +63,10 @@ const Index = () => {
     if (activeChatId) {
       sendMessage(activeChatId, text);
     }
+  };
+
+  const handleSmartReply = (text: string) => {
+    chatAreaRef.current?.setInputText(text);
   };
 
   return (
@@ -83,9 +111,11 @@ const Index = () => {
             }}
             onToggleAI={() => setAiPanelOpen(!aiPanelOpen)}
             showBackButton={mobileShowChat}
+            aiBadgeCount={memoryBadge}
           />
           <div className="flex-1 min-h-0">
             <ChatArea
+              ref={chatAreaRef}
               chatId={activeChatId}
               messages={activeMessages}
               isTyping={isTyping}
@@ -109,7 +139,10 @@ const Index = () => {
                 "max-xl:fixed max-xl:right-0 max-xl:top-0 max-xl:bottom-0 max-xl:w-[85vw] max-xl:max-w-80 max-xl:shadow-xl"
               )}
             >
-              <AIPanel onClose={() => setAiPanelOpen(false)} />
+              <AIPanel
+                onClose={() => setAiPanelOpen(false)}
+                onSmartReply={handleSmartReply}
+              />
             </div>
           </>
         )}

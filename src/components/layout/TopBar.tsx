@@ -1,4 +1,4 @@
-import { Bell, Menu, ChevronLeft, Phone, Video, MoreVertical, User, Settings, LogOut } from "lucide-react";
+import { Bell, Menu, ChevronLeft, Phone, Video, MoreVertical, User, Settings, LogOut, Sparkles } from "lucide-react";
 import { Chat } from "@/data/sampleData";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -15,9 +15,10 @@ interface TopBarProps {
   onToggleSidebar?: () => void;
   onToggleAI?: () => void;
   showBackButton?: boolean;
+  aiBadgeCount?: number;
 }
 
-const TopBar = ({ chat, onToggleSidebar, onToggleAI, showBackButton }: TopBarProps) => {
+const TopBar = ({ chat, onToggleSidebar, onToggleAI, showBackButton, aiBadgeCount = 0 }: TopBarProps) => {
   return (
     <header className="h-16 border-b bg-card/80 backdrop-blur-sm flex items-center justify-between px-4 shrink-0">
       <div className="flex items-center gap-3">
@@ -62,8 +63,13 @@ const TopBar = ({ chat, onToggleSidebar, onToggleAI, showBackButton }: TopBarPro
           <Bell className="h-4 w-4 text-muted-foreground" />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-accent rounded-full" />
         </button>
-        <button onClick={onToggleAI} className="p-2 rounded-lg hover:bg-muted transition-colors">
-          <MoreVertical className="h-4 w-4 text-muted-foreground" />
+        <button onClick={onToggleAI} className="relative p-2 rounded-lg hover:bg-muted transition-colors">
+          <Sparkles className="h-4 w-4 text-muted-foreground" />
+          {aiBadgeCount > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center px-1 text-[10px] font-bold bg-accent text-accent-foreground rounded-full animate-bounce">
+              {aiBadgeCount > 9 ? "9+" : aiBadgeCount}
+            </span>
+          )}
         </button>
 
         <DropdownMenu>

@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 interface AIPanelProps {
   className?: string;
   onClose?: () => void;
+  onSmartReply?: (text: string) => void;
 }
 
 type TabKey = "brain" | "memory" | "context" | "actions";
@@ -22,7 +23,7 @@ const tabs: { key: TabKey; label: string; icon: React.ElementType }[] = [
   { key: "actions", label: "Actions", icon: Zap },
 ];
 
-const AIPanel = ({ className, onClose }: AIPanelProps) => {
+const AIPanel = ({ className, onClose, onSmartReply }: AIPanelProps) => {
   const [activeTab, setActiveTab] = useState<TabKey>("brain");
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [summaryVisible, setSummaryVisible] = useState(false);
@@ -154,6 +155,7 @@ const AIPanel = ({ className, onClose }: AIPanelProps) => {
                     {smartReplies.map((reply, i) => (
                       <button
                         key={i}
+                        onClick={() => onSmartReply?.(reply)}
                         className="w-full text-left text-xs px-3 py-2.5 rounded-lg border hover:border-primary/30 hover:bg-primary/5 transition-all"
                       >
                         {reply}
